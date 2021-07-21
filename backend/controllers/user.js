@@ -1,11 +1,46 @@
+
 //package bcrypt for password protection
 const bcrypt = require('bcrypt');
 //Json web token
 const jwt =require('jsonwebtoken');
 
-//const user = require('../models/user');
+const users = require ('../models/user');
 
+const signup = (req,res,next)=>{
+  bcrypt.hash(req.body.password, 10 ,function(err,hashpass){
+if(err){
+res.json({
+  erroe:err
+})
+}
+let user = new user({
+  email: req.body.email,
+  password: hashpass
+})
+
+user.save()
+.then(user =>{
+  res.json({
+    message: 'Utilisateur créé !'
+  })
+})
+.catch(user =>{
+  res.json({
+    message: 'error !'
+  })
+})
+  })
+
+}
+
+module.exports = {
+  signup
+}
+
+
+/*
 exports.signup = (req,res,next)=>{
+
 //hash the password
 bcrypt.hash(req.body.password, 10)
 .then(hash => {
@@ -45,3 +80,4 @@ exports.login = (req,res,next)=>{
     })
     .catch(error => res.status(500).json({ error }));
 };
+*/

@@ -1,4 +1,6 @@
 const sources =require ('../models/sources');
+//package for delete the image from the server
+const fs = require('fs');
 
 //function to create source
 exports.createSource = (req, res, next) => {
