@@ -1,12 +1,13 @@
 const express = require('express');
 const router = express.Router();
 
-//const stuffCtrl = require('../controllers/stuff');
+const stuffCtrl = require('../controllers/stuff');
 const auth = require('../middleware/auth');
 const multer = require ('../middleware/multer_config');
 
   // create the new saourse in the DB
-  router.post('/',auth,multer, stuffCtrl.createSource);
+  route.post('/sauces',auth,multer,stuffCtrl.sauces);
+  //router.post('/',auth,multer, stuffCtrl.createSource);
  //catching the new sources from the DB
   router.use('/',auth,stuffCtrl.getAllSouces);
   //TODO

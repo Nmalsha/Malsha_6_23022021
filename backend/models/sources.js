@@ -13,5 +13,6 @@ const soucesSchema = mongoose.Schema({
     usersDisliked:{type:Number, required:true},
 
 
-});
-module.exports = mongoose.model('sorces',soucesSchema);
+},
+{collection:'sources'});
+module.exports = mongoose.model('sources',soucesSchema);

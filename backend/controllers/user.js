@@ -1,83 +1,88 @@
-
-//package bcrypt for password protection
-const bcrypt = require('bcrypt');
+const express = require('express');
+const app = require('../app');
+//adding users
+const user = require ('./models/user');
 //Json web token
 const jwt =require('jsonwebtoken');
+//adding bodyparser
+const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 
-const users = require ('../models/user');
-
-const signup = (req,res,next)=>{
-  bcrypt.hash(req.body.password, 10 ,function(err,hashpass){
-if(err){
-res.json({
-  erroe:err
-})
-}
-let user = new user({
-  email: req.body.email,
-  password: hashpass
-})
-
-user.save()
-.then(user =>{
-  res.json({
-    message: 'Utilisateur créé !'
-  })
-})
-.catch(user =>{
-  res.json({
-    message: 'error !'
-  })
-})
-  })
-
-}
-
-module.exports = {
-  signup
-}
-
-
+const app = express();
 /*
-exports.signup = (req,res,next)=>{
+app.use(bodyParser.json());
 
-//hash the password
-bcrypt.hash(req.body.password, 10)
-.then(hash => {
-  const user = new User({
-    email: req.body.email,
-    password: hash
-  });
-  //save the user in to the DB
-  user.save()
-    .then(() => res.status(201).json({ message: 'Utilisateur créé !' }))
-    .catch(error => res.status(400).json({ error }));
-})
-.catch(error => res.status(500).json({ error }));
-
-};
-exports.login = (req,res,next)=>{
-    User.findOne({ email: req.body.email })
-    .then(user => {
-      if (!user) {
-        return res.status(401).json({ error: 'Utilisateur non trouvé !' });
-      }
-      bcrypt.compare(req.body.password, user.password)
-        .then(valid => {
-          if (!valid) {
-            return res.status(401).json({ error: 'Mot de passe incorrect !' });
-          }
-          res.status(200).json({
-            userId: user._id,
-            token: jwt.sign(
-                { userId: user._id },
-                'RANDOM_TOKEN_SECRET',
-                { expiresIn: '24h' }
-            )
-          });
-        })
-        .catch(error => res.status(500).json({ error }));
+//--------------SIGNUP A CLIENT-----------------------------------
+app.post('/api/auth/signup',async(req, res, next) => {
+  // console.log(req.body)
+  
+    const {email,password:plainTextPassword} =req.body
+    if(!email){
+      return res.json({
+        status:'error',
+        error:'Email filed is empty!'})
+    }
+    if(plainTextPassword.length<3){
+      return res.json({
+        status:'error',
+        error:'Password too small. Should be at least 6 characters'})
+    }
+    const salt = await bcrypt.genSalt(10);
+  const password = await bcrypt.hash(req.body.password ,salt)
+     // created salt with brcrypt in async
+     //const salt = await bcrypt.genSalt(10);
+     //  created hash with brcrypt in async
+    //const hash = await bcrypt.hash(req.body.password, salt);
+   console.log(password);
+  try{
+   const reponce = await user.create({
+      email,
+      password
     })
-    .catch(error => res.status(500).json({ error }));
-};
-*/
+    console.log('user created successfully')
+    console.log(reponce)
+  }catch(error){
+  //console.log(JSON.stringify(error))
+  if(error.code ===11000){
+    //duplicate key
+    return res.json({
+      status:'error',
+      error:'this email address already exist'})
+  }
+  throw error
+  }
+   res.json ({status:'ok ok'})
+    next();
+  });
+  //--------------FIN SIGNUP A CLIENT-----------------------------------
+  
+  //--------------LOGIN A CLIENT-----------------------------------
+  app.post('/api/auth/login',async(req,res,next)=>{
+  const {email,password} = req.body
+  
+  const finduser = await user.findOne({email})
+  //if user not exist
+  if (!finduser) {
+    return res.json({ status:'error', error: 'Invalid username/password !' });
+  }
+  //checking if the password is correct and match
+  if(await bcrypt.compare(req.body.password,finduser.password)){
+    //if ok sending the token
+    const token = jwt.sign({ 
+      id: finduser._id,
+      email:finduser.email
+    },
+    'RANDOM_TOKEN_SECRET',
+    { expiresIn: '24h' }
+       )
+    
+       console.log('user login successfully')
+       console.log(token)
+    return res.json({ status:'ok', data:'token'});
+  }
+  
+  console.log('Invalid username/password !')
+  res.json ({status:'error', error:'Invalid username/password !'}) 
+  next();
+  })
+  */
