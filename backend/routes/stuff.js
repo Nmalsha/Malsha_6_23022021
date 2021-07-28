@@ -1,20 +1,27 @@
 const express = require('express');
 const router = express.Router();
+//adding controller
+const soucesController = require('../controllers/stuff')
 
-const stuffCtrl = require('../controllers/stuff');
+
 const auth = require('../middleware/auth');
 const multer = require ('../middleware/multer_config');
 
+
+
+
+
+
   // create the new saourse in the DB
-  route.post('/sauces',auth,multer,stuffCtrl.sauces);
-  //router.post('/',auth,multer, stuffCtrl.createSource);
- //catching the new sources from the DB
-  router.use('/',auth,stuffCtrl.getAllSouces);
-  //TODO
-  //modify a source
-  //router.put('/:id',multer, stuffCtrl.modifySource);
-  //get On Source
-//router.delete('/:id', stuffCtrl.deleteSource);
-  //delete source
-  //router.get('/:id', stuffCtrl.getOnSource);
+//  router.post("/sauces",auth,multer,soucesController.createSauce)
+//catching the new sources from the DB
+ //router.get("/sauces",auth,multer,soucesController.findAllSouces)
+  //find one sauce
+ // router.get("/:id",auth,multer,soucesController.findOneSauce)
+  //update a source
+ // router.patch("/:id",multer,soucesController.updatesauce)
+  
+ //delete source
+  //router.delete("/:id",soucesController.deletesauce)
+  
   module.exports = router;

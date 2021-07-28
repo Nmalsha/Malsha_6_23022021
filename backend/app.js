@@ -9,10 +9,17 @@ const bodyParser = require('body-parser');
 const bcrypt = require('bcryptjs');
 //adding jwt token
 const jwt =require('jsonwebtoken');
+//adding cors
+var cors = require('cors')
 //adding users
 const user = require ('./models/user');
 //adding sources
-const sources =require ('./models/sources');
+//const saucesModel =require ('./models/sources');
+// adding route
+const stuffRoutes = require ('./routes/stuff');
+
+//adding controller
+const soucesController = require('./controllers/stuff')
 //const JWT_SECRET = '"Bearer'
 const path = require('path');
 
@@ -26,7 +33,16 @@ mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net
 //mongoose.connect('mongodb://localhost:3000/signup',
   { useNewUrlParser: true,
     useUnifiedTopology: true })
-  .then(() => console.log('Connexion à MongoDB réussie !'))
+    .then (()=>{
+      const app = express();
+      app.use(express.json());
+
+      console.log('Connexion à MongoDB réussie !')
+     
+      
+ 
+    })
+   
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
 //Adding CORS (Cross Origin Resource Sharing,)
@@ -38,14 +54,36 @@ app.use((req, res, next) => {
   res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
   //d'envoyer des requêtes avec les méthodes mentionnées
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
+ // res.setHeader('Access-Control-Allow-Credentials true');
   next();
 });
 
+
+
+
+var corsOptions = {
+  origin: '*',
+  optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
+}
+
+
+
+
+
+
 app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
+//app.use(express.json());
+
+app.use('/api/sauces',stuffRoutes);
+app.use(cors(corsOptions));
+
+
+
 
 //--------------SIGNUP A CLIENT-----------------------------------
 app.post('/api/auth/signup',async(req, res, next) => {
-// console.log(req.body)
+console.log(req.body)
 
   const {email,password:plainTextPassword} =req.body
   if(!email){
@@ -62,13 +100,18 @@ app.post('/api/auth/signup',async(req, res, next) => {
   const salt = await bcrypt.genSalt(10);
    //  created hash with brcrypt in async
 const password = await bcrypt.hash(req.body.password ,salt)
-   
+   //mask the email address
+  // let emailmask = buffer.toString('base64');
  console.log(password);
+ 
 try{
+ 
  const reponce = await user.create({
     email,
     password
+   
   })
+  
   console.log('user created successfully')
   console.log(reponce)
 }catch(error){
@@ -81,6 +124,7 @@ if(error.code ===11000){
 }
 throw error
 }
+
  res.json ({status:'ok ok'})
   next();
 });
@@ -115,27 +159,9 @@ console.log('Invalid username/password !')
 res.json ({status:'error', error:'Invalid username/password !'}) 
 next();
 })
+//--------------------------------TESTING -------------------------------
 
-//function to create source
-app.post ('/api/sauces',async(req, res, next) => {
-  delete req.body._id;
-  //const sourceObject = JSON.parse(req,body,source);
-  const addSources = new sources ({
-...req.body
-
-  } )
-  console.log(addSources);
-  console.log('added success');
-   // delete req.body._id;
-    //const sourceNEWObject = new sources({
-      //...sourceObject,
-      //imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
-    //});
-    addSources.save()
-   
-      .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
-      .catch(error => res.status(400).json({ error }));
-      next();
-  });
+app.get("/sauces",soucesController.findAllSouces);
+app.post("/sauces",soucesController.createSauce);
 
 module.exports = app;
