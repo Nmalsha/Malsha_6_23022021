@@ -1,12 +1,13 @@
 
 //package for delete the image from the server
 const fs = require('fs');
+const app = require('../app');
 //adding sources
 const saucesModel =require ('../models/sources');
 
 
 
-const app = require('../app');
+
 
 
 
@@ -21,13 +22,54 @@ exports.findAllSouces = async(req,res)=>{
 
 //-------------function to create source----------------
 exports.createSauce = (req, res)=>{
-  let newsauce =  new saucesModel(req.body);
-  res.send({data:newsauce});
-  console.log(newsauce);
+  delete req.body._id;
+  let newsauce =  new saucesModel({
+    ...req.body
+  });
+  console.log('before save');
+ console.log(newsauce);
+newsauce.save()
+
+ //res.send({data:newsauce});
+ //newsauce.save()
+ 
+ .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
+
+
+ .catch(error => res.status(400).json({ error :error}));
+
+
+ 
+  
+  
 }
 
 
+
 /*
+exports.createSauce = async(req, res)=>{
+  try{
+    delete req.body._id;
+  let newsauce =  new saucesModel({
+    ...req.body
+  });
+  console.log('before save');
+  await newsauce.save();
+  console.log(newsauce);
+  console.log('after save');
+
+  }catch(error){
+    console.log('error'+error);
+    res.status(400).send(error);
+  }
+}
+
+
+
+
+
+
+
 exports.createSauce = (req, res)=>{
   let newsauce =  new saucesModel(req.body);
 

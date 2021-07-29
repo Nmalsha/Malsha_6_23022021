@@ -8,7 +8,7 @@ const soucesSchema = mongoose.Schema({
     heat:{type:Number, required:true},
     likes:{type:Number, required:true},
     dislikes:{type:Number, required:true},
-    imageUrl: {type:String, required:true},
+    imageURL: {type:String, required:true},
     mainPepper:{type:String, required:true},
     usersLiked:{type:String, required:true},
     usersDisliked:{type:String, required:true},

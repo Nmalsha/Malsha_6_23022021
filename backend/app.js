@@ -22,9 +22,8 @@ const stuffRoutes = require ('./routes/stuff');
 const soucesController = require('./controllers/stuff')
 //const JWT_SECRET = '"Bearer'
 const path = require('path');
-
-
-const app = express();
+const auth = require('./middleware/auth');
+const multer = require ('./middleware/multer_config');
 
 //connection mongo DB
 
@@ -45,19 +44,23 @@ mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net
    
   .catch(() => console.log('Connexion à MongoDB échouée !'));
 
+
+
+
+
+const app = express();
 //Adding CORS (Cross Origin Resource Sharing,)
 app.use((req, res, next) => {
   //d'accéder à notre API depuis n'importe quelle origine 
   
   res.setHeader('Access-Control-Allow-Origin', '*');
   //d'ajouter les headers mentionnés aux requêtes envoyées vers notre API 
-  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type, Authorization');
+  res.setHeader('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content, Accept, Content-Type:application/x-www-form-urlencoded, Authorization');
   //d'envoyer des requêtes avec les méthodes mentionnées
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, PATCH, OPTIONS');
  // res.setHeader('Access-Control-Allow-Credentials true');
   next();
 });
-
 
 
 
@@ -70,10 +73,12 @@ var corsOptions = {
 
 
 
-
+// Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-//app.use(express.json());
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+
 
 app.use('/api/sauces',stuffRoutes);
 app.use(cors(corsOptions));
