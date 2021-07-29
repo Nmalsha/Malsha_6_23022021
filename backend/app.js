@@ -1,8 +1,9 @@
 const express = require('express');
+//adding env
+ require ('dotenv').config();
 //adding mongo database
 const mongoose = require('mongoose');
-//adding env
-const dotenv = require ('dotenv');
+
 //adding bodyparser
 const bodyParser = require('body-parser');
 //adding bcryptconst 
@@ -17,13 +18,14 @@ const user = require ('./models/user');
 //const saucesModel =require ('./models/sources');
 // adding route
 const stuffRoutes = require ('./routes/stuff');
-
+//const userRoutes = requir ('./routes/user');
 //adding controller
 const soucesController = require('./controllers/stuff')
 //const JWT_SECRET = '"Bearer'
 const path = require('path');
 const auth = require('./middleware/auth');
 const multer = require ('./middleware/multer_config');
+
 
 //connection mongo DB
 
@@ -79,8 +81,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-
+app.use('/images',express.static(path.join(__dirname,'images')));
 app.use('/api/sauces',stuffRoutes);
+
+//app.use('/api/sauces',userRoutes);
 app.use(cors(corsOptions));
 
 
@@ -166,7 +170,7 @@ next();
 })
 //--------------------------------TESTING -------------------------------
 
-app.get("/sauces",soucesController.findAllSouces);
-app.post("/sauces",soucesController.createSauce);
+app.get("/api/sauces",soucesController.findAllSouces);
+app.post("/api/sauces",soucesController.createSauce);
 
 module.exports = app;
