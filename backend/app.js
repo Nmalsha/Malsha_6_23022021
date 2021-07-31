@@ -18,9 +18,10 @@ const user = require ('./models/user');
 //const saucesModel =require ('./models/sources');
 // adding route
 const stuffRoutes = require ('./routes/stuff');
-//const userRoutes = requir ('./routes/user');
+const userRoutes = require ('./routes/user');
 //adding controller
 const soucesController = require('./controllers/stuff')
+//const userController =require('./controllers/user')
 //const JWT_SECRET = '"Bearer'
 const path = require('path');
 const auth = require('./middleware/auth');
@@ -83,14 +84,18 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/images',express.static(path.join(__dirname,'images')));
 app.use('/api/sauces',stuffRoutes);
+app.use('/api/auth',userRoutes);
 
-//app.use('/api/sauces',userRoutes);
-app.use(cors(corsOptions));
+//
+app.use(cors());
+app.options('*',cors());
+//app.use(cors(corsOptions));
 
 
 
 
 //--------------SIGNUP A CLIENT-----------------------------------
+
 app.post('/api/auth/signup',async(req, res, next) => {
 console.log(req.body)
 
@@ -119,10 +124,12 @@ try{
     email,
     password
    
+   
   })
   
   console.log('user created successfully')
   console.log(reponce)
+  console.log(reponce._id)
 }catch(error){
 //console.log(JSON.stringify(error))
 if(error.code ===11000){
@@ -137,40 +144,76 @@ throw error
  res.json ({status:'ok ok'})
   next();
 });
+
 //--------------FIN SIGNUP A CLIENT-----------------------------------
 
 //--------------LOGIN A CLIENT-----------------------------------
 app.post('/api/auth/login',async(req,res,next)=>{
-const {email,password} = req.body
-
-const finduser = await user.findOne({email})
-//if user not exist
-if (!finduser) {
-  return res.json({ status:'error', error: 'Invalid username/password !' });
-}
-//checking if the password is correct and match
-if(await bcrypt.compare(req.body.password,finduser.password)){
-  //if ok sending the token
-  const token = jwt.sign({ 
-    id: finduser._id,
-    email:finduser.email
-  },
-  'RANDOM_TOKEN_SECRET',
-  { expiresIn: '24h' }
-     )
+  const {email,password} = req.body
   
-     console.log('user login successfully')
-     console.log(token)
-  return res.json({ status:'ok', data:'token'});
-}
+  const finduser = await user.findOne({email})
+  console.log(finduser._id)
+  //if user not exist
+  if (!finduser) {
+    return res.json({ status:'error', error: 'Invalid username/password !' });
+  }
+  //checking if the password is correct and match
+  if(await bcrypt.compare(req.body.password,finduser.password)){
+    //if ok sending the token
+    const token = jwt.sign({ 
+      id: finduser._id,
+      email:finduser.email,
+  
+    },
+    'RANDOM_TOKEN_SECRET',
+    { expiresIn: '24h' }
+       )
+       console.log('user login successfully')
+       
+       
+       console.log(token)
+    return res.json({ status:'ok', token:token, userId:finduser._id });
+  }
+  
+  console.log('Invalid username/password !')
+  res.json ({status:'error', error:'Invalid username/password !'}) 
+  next();
+  })
+/*
+app.post('/api/auth/login',(req,res,next)=>{
+  const finduser = user.findOne({email:req.body.email})
+  .then(finduser =>{
+    if (!finduser){
+return res.status(401).json({error:'utilisature non trouvé!'})
+    }
+    bcrypt.compare(req.body.password,finduser.password)
+    .then(valid =>{
+      if(!valid){
+        return res.status(401).json({error:'mot de pass incorrect !!'})
+      }
+      console.log('user login successfully')
+      res.status(200)({
+        userId:finduser_id,
+        token:'TOKEN'
+      })
+    }
 
-console.log('Invalid username/password !')
-res.json ({status:'error', error:'Invalid username/password !'}) 
-next();
+    )
+    .catch(error =>res.status(500).json({error}));
+  })
+  .catch(error =>res.status(500).json({error}));
+
 })
-//--------------------------------TESTING -------------------------------
 
-app.get("/api/sauces",soucesController.findAllSouces);
-app.post("/api/sauces",soucesController.createSauce);
+
+/*
+
+*/
+//--------------------------------TESTING -------------------------------
+//app.post('/signup',userController.signup);
+//app.post('/login',userController.login);
+app.get("/api/sauces",auth,soucesController.findAllSouces);
+app.post("/api/sauces",auth,multer,soucesController.createSauce);
+app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
 
 module.exports = app;
