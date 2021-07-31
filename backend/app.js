@@ -3,10 +3,9 @@ const express = require('express');
  require ('dotenv').config();
 //adding mongo database
 const mongoose = require('mongoose');
-
 //adding bodyparser
 const bodyParser = require('body-parser');
-//adding bcryptconst 
+//adding bcrypt const 
 const bcrypt = require('bcryptjs');
 //adding jwt token
 const jwt =require('jsonwebtoken');
@@ -210,10 +209,13 @@ return res.status(401).json({error:'utilisature non trouvé!'})
 
 */
 //--------------------------------TESTING -------------------------------
+
 //app.post('/signup',userController.signup);
 //app.post('/login',userController.login);
 app.get("/api/sauces",auth,soucesController.findAllSouces);
 app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
+
+app.post("/api/sauces/:id/like",auth,soucesController.likeSauce);
 
 module.exports = app;

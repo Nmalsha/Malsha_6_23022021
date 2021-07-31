@@ -3,25 +3,22 @@ const router = express.Router();
 //adding controller
 const soucesController = require('../controllers/stuff')
 
-
+//adding middleware authentification
 const auth = require('../middleware/auth');
 const multer = require ('../middleware/multer_config');
 
+/*
+//catching the All sources from the DB
+router.get("/api/sauces",auth,soucesController.findAllSouces);
+ // create the new saourse in the DB
+ router.post("/api/sauces",auth,multer,soucesController.createSauce);
+//find one sauce
+router.get("/api/sauces/:id",auth,soucesController.findOneSauce);
+//update a source
 
+//delete source
 
+router.post("/api/sauces/:id/like",auth,soucesController.likeSauce
 
-
-
-  // create the new saourse in the DB
-//  router.post("/sauces",auth,multer,soucesController.createSauce)
-//catching the new sources from the DB
- //router.get("/sauces",auth,multer,soucesController.findAllSouces)
-  //find one sauce
- // router.get("/:id",auth,multer,soucesController.findOneSauce)
-  //update a source
- // router.patch("/:id",multer,soucesController.updatesauce)
-  
- //delete source
-  //router.delete("/:id",soucesController.deletesauce)
-  
+*/
   module.exports = router;
