@@ -1,6 +1,7 @@
 
 //package for delete the image from the server
 const fs = require('fs');
+
 const app = require('../app');
 //adding sources
 const saucesModel =require ('../models/sources');
@@ -13,6 +14,7 @@ const saucesModel =require ('../models/sources');
 
 //-----------------function to Find sauces---------------
 exports.findAllSouces = async(req,res)=>{
+  //var allsauceObject = JSON.parse(req.body.sauce);
   const souce = await saucesModel.find()
   .then(souce => res.status(200).json(souce))
   .catch(error => res.status(400).json({error}));
@@ -24,10 +26,6 @@ exports.findAllSouces = async(req,res)=>{
      
 
 //-------------function to create source----------------
-//get userId
-//db.getUser("_id");
-
-
 exports.createSauce =   (req, res,next)=>{
 
  var sauceObject = JSON.parse(req.body.sauce);
@@ -36,6 +34,7 @@ exports.createSauce =   (req, res,next)=>{
  
 //console.log(sauceObject);
   const newsauce =  new saucesModel({
+    name:sauceObject.name,
     manufacturer: sauceObject.manufacturer,
     description:sauceObject.description,
     heat:sauceObject.heat,
@@ -65,19 +64,47 @@ newsauce.save()
 
 //-----------------function to find a sauce-----------------------
 
-exports.findOneSauce = (req,res,next) => {
- 
+exports.findOneSauce =  (req,res,next) => {
+  //const findsauceobject = JSON.parse(req.body);
+  console.log(req.params.id);
+  //console.log(_id);
      saucesModel.findOne({_id:req.params.id})
-    
+     
     .then(() => res.status(201).json({ message: 'Objet trouvé !'}))
   .catch(error =>res.status(400).json({ error :error}));
 
 }
 
 //-------------function to modify source----------------
+exports.modifysauce = async(req,res,nest) => {
+  const modisauceObject = req.file?
+  {
+    ...JSON.parse(req.body.sauce),
+      imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
+      
+  } : {...req.body};
+  saucesModel.updateOne({_id:req.params.id},{...modisauceObject, _id: req.params.id})  
+  .then(() => res.status(201).json({ message: 'sauce modifié!'}))
+  .catch(error =>res.status(400).json({ error :error}));
+  
+}
 
 
 //-------------function to delete source----------------
+exports.deletesauce = async(req,res) => {
+  saucesModel.findOne({_id:req.params.id})
+  .then(sauce =>{
+    const filename = sauce.imageUrl.split('/images')[1];
+    fs.unlink('images/${filename}',()=>{
+      saucesModel.deleteOne({_id:req.params.id})
+      .then(() => res.status(201).json({ message: 'objet supprimé!'}))
+  .catch(error =>res.status(400).json({ error :error}));
+    });
+  })
+  
+ 
+  .catch(error =>res.status(400).json({ error :error}));
+};
 
 //-----------------function for user like dislike system-----------------------
 
@@ -88,16 +115,21 @@ exports.likeSauce = (req,res,next) => {
     case 1:
       //if user like adding the like with the userId
       saucesModel.updateOne({_id:req.params.id},{$inc : {likes:  + 1},
-      $push: {userliked :req.body.userId}
+      $push: {usersLiked :req.body.userId}
+      
       })
+      
 .then (() => res.status(201).json({ message: 'j aime la sauce  !'}))
 .catch(error =>res.status(500).json({ error :error}));
+console.log(like);
+console.log(usersLiked);
+console.log(_id);
 break;
 
 case -1 :
   //if the user doesnt like the sace , adding his unlike with the userId
   saucesModel.updateOne({_id:req.params.id},{
-    $push: {userDisliked :req.body.userId},$inc : {dislikes:  + 1}
+    $push: {usersDisliked :req.body.userId},$inc : {dislikes:  + 1}
   })
   .then (() => res.status(201).json({ message: 'j naime pas la sauce  !'}))
 .catch(error =>res.status(500).json({ error :error}))
@@ -109,9 +141,9 @@ break;
 case 0:
   saucesModel.findOne({_id:req.params.id})
   .then (sauce =>{
-    if(sauce.usersliked.includes(req.body.userId)){
-      sauce.updateOne({_id:req.params.id},{
-        $pull :{usersliked:req.body.userId},$inc :{likes :-1}
+    if(sauce.usersLiked.includes(req.body.userId)){
+      saucesModel.updateOne({_id:req.params.id},{
+        $pull :{usersLiked:req.body.userId},$inc :{likes :-1}
           
       })
       .then (() => res.status(201).json({ message: 'j aime retiré  !'}))
@@ -119,7 +151,7 @@ case 0:
 
     }
     else{
-      sauce.updateOne({_id:req.params.id},{
+      saucesModel.updateOne({_id:req.params.id},{
         $pull :{usersDisliked:req.body.userId},$inc :{dislikes :-1}
       })
       .then (() => res.status(201).json({ message: 'j naime pas retiré  !'}))
@@ -128,6 +160,7 @@ case 0:
   })
   .catch(error =>res.status(500).json({ error :error}))
   break;
+  default :console.log(req.body);
 }
 }
 

@@ -1,31 +1,32 @@
 const express = require('express');
-//adding env
- require ('dotenv').config();
-//adding mongo database
+//required modules
 const mongoose = require('mongoose');
-//adding bodyparser
 const bodyParser = require('body-parser');
-//adding bcrypt const 
-const bcrypt = require('bcryptjs');
-//adding jwt token
-const jwt =require('jsonwebtoken');
-//adding cors
+const path = require('path');
 var cors = require('cors')
-//adding users
+// package multer for handle image files
+const multer = require ('./middleware/multer_config');
+
+// security modules
+const bcrypt = require('bcryptjs');
+const jwt =require('jsonwebtoken');
+const dotenv = require ('dotenv').config();
+
+//adding  users model -MOVE TO USER CONTROLLER
 const user = require ('./models/user');
-//adding sources
-//const saucesModel =require ('./models/sources');
+
 // adding route
 const stuffRoutes = require ('./routes/stuff');
 const userRoutes = require ('./routes/user');
-//adding controller
-const soucesController = require('./controllers/stuff')
-//const userController =require('./controllers/user')
-//const JWT_SECRET = '"Bearer'
-const path = require('path');
-const auth = require('./middleware/auth');
-const multer = require ('./middleware/multer_config');
 
+//adding controller _ MOVE TO STUFF ROUTES
+const soucesController = require('./controllers/stuff')
+
+//parameter for user authentification
+const auth = require('./middleware/auth');
+
+//initialisation application expesse
+const app = express();
 
 //connection mongo DB
 
@@ -35,8 +36,8 @@ mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net
   { useNewUrlParser: true,
     useUnifiedTopology: true })
     .then (()=>{
-      const app = express();
-      app.use(express.json());
+      //const app = express();
+     // app.use(express.json());
 
       console.log('Connexion à MongoDB réussie !')
      
@@ -50,7 +51,7 @@ mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net
 
 
 
-const app = express();
+
 //Adding CORS (Cross Origin Resource Sharing,)
 app.use((req, res, next) => {
   //d'accéder à notre API depuis n'importe quelle origine 
@@ -63,9 +64,6 @@ app.use((req, res, next) => {
  // res.setHeader('Access-Control-Allow-Credentials true');
   next();
 });
-
-
-
 var corsOptions = {
   origin: '*',
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
@@ -78,17 +76,22 @@ var corsOptions = {
 // Body parser middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use(cors());
+app.options('*',cors());
+
+//image file handling
 app.use('/images',express.static(path.join(__dirname,'images')));
+//Routes
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 
-//
-app.use(cors());
-app.options('*',cors());
-//app.use(cors(corsOptions));
+
+
+
 
 
 
@@ -178,36 +181,9 @@ app.post('/api/auth/login',async(req,res,next)=>{
   res.json ({status:'error', error:'Invalid username/password !'}) 
   next();
   })
-/*
-app.post('/api/auth/login',(req,res,next)=>{
-  const finduser = user.findOne({email:req.body.email})
-  .then(finduser =>{
-    if (!finduser){
-return res.status(401).json({error:'utilisature non trouvé!'})
-    }
-    bcrypt.compare(req.body.password,finduser.password)
-    .then(valid =>{
-      if(!valid){
-        return res.status(401).json({error:'mot de pass incorrect !!'})
-      }
-      console.log('user login successfully')
-      res.status(200)({
-        userId:finduser_id,
-        token:'TOKEN'
-      })
-    }
-
-    )
-    .catch(error =>res.status(500).json({error}));
-  })
-  .catch(error =>res.status(500).json({error}));
-
-})
 
 
-/*
 
-*/
 //--------------------------------TESTING -------------------------------
 
 //app.post('/signup',userController.signup);
@@ -215,7 +191,8 @@ return res.status(401).json({error:'utilisature non trouvé!'})
 app.get("/api/sauces",auth,soucesController.findAllSouces);
 app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
-
+app.put("/api/sauces/:id",auth,soucesController.modifysauce);
+app.delete("/api/sauces/:id",auth,soucesController.deletesauce);
 app.post("/api/sauces/:id/like",auth,soucesController.likeSauce);
 
 module.exports = app;
