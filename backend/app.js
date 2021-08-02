@@ -4,8 +4,16 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 var cors = require('cors')
-// package multer for handle image files
+// package multer for handle image files - MOVE TO ROUTE
 const multer = require ('./middleware/multer_config');
+
+//parameter for user authentification -MOVE TO ROUTE
+const auth = require('./middleware/auth');
+
+//adding controller _ MOVE TO STUFF ROUTES
+const soucesController = require('./controllers/stuff')
+
+
 
 // security modules
 const bcrypt = require('bcryptjs');
@@ -18,12 +26,6 @@ const user = require ('./models/user');
 // adding route
 const stuffRoutes = require ('./routes/stuff');
 const userRoutes = require ('./routes/user');
-
-//adding controller _ MOVE TO STUFF ROUTES
-const soucesController = require('./controllers/stuff')
-
-//parameter for user authentification
-const auth = require('./middleware/auth');
 
 //initialisation application expesse
 const app = express();
@@ -191,8 +193,8 @@ app.post('/api/auth/login',async(req,res,next)=>{
 app.get("/api/sauces",auth,soucesController.findAllSouces);
 app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
-app.put("/api/sauces/:id",auth,soucesController.modifysauce);
+app.put("/api/sauces/:id",auth,multer,soucesController.modifysauce);
 app.delete("/api/sauces/:id",auth,soucesController.deletesauce);
-app.post("/api/sauces/:id/like",auth,soucesController.likeSauce);
+//app.post("/api/sauces/:id/like",soucesController.likeSauce);
 
 module.exports = app;

@@ -13,6 +13,7 @@ const saucesModel =require ('../models/sources');
 
 
 //-----------------function to Find sauces---------------
+
 exports.findAllSouces = async(req,res)=>{
   //var allsauceObject = JSON.parse(req.body.sauce);
   const souce = await saucesModel.find()
@@ -23,7 +24,6 @@ exports.findAllSouces = async(req,res)=>{
 
        }
 
-     
 
 //-------------function to create source----------------
 exports.createSauce =   (req, res,next)=>{
@@ -63,16 +63,12 @@ newsauce.save()
 }
 
 //-----------------function to find a sauce-----------------------
-
-exports.findOneSauce =  (req,res,next) => {
-  //const findsauceobject = JSON.parse(req.body);
-  console.log(req.params.id);
-  //console.log(_id);
-     saucesModel.findOne({_id:req.params.id})
-     
-    .then(() => res.status(201).json({ message: 'Objet trouvé !'}))
-  .catch(error =>res.status(400).json({ error :error}));
-
+exports.findOneSauce = async(req,res) => {
+  
+   const findsouce = await saucesModel.findOne({_id:req.params.id})
+   // res.send({data:sauce});
+   .then(findsouce => res.status(200).json(findsouce))
+   .catch(error => res.status(400).json({error}));
 }
 
 //-------------function to modify source----------------
@@ -107,7 +103,7 @@ exports.deletesauce = async(req,res) => {
 };
 
 //-----------------function for user like dislike system-----------------------
-
+/*
 exports.likeSauce = (req,res,next) => {
 
   const like =req.body.like;
@@ -121,9 +117,9 @@ exports.likeSauce = (req,res,next) => {
       
 .then (() => res.status(201).json({ message: 'j aime la sauce  !'}))
 .catch(error =>res.status(500).json({ error :error}));
-console.log(like);
-console.log(usersLiked);
-console.log(_id);
+//console.log(like);
+//console.log(usersLiked);
+//console.log(_id);
 break;
 
 case -1 :
@@ -163,7 +159,7 @@ case 0:
   default :console.log(req.body);
 }
 }
-
+*/
 /*
 exports.createSauce = async(req, res)=>{
   try{
