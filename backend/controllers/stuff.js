@@ -6,7 +6,8 @@ const app = require('../app');
 //adding sources
 const saucesModel =require ('../models/sources');
 
-
+//adding xss protection for the data entered by the user ( cross site scripting)
+const xss = require ('xss')
 
 
 
@@ -34,16 +35,16 @@ exports.createSauce =   (req, res,next)=>{
  
 //console.log(sauceObject);
   const newsauce =  new saucesModel({
-    name:sauceObject.name,
-    manufacturer: sauceObject.manufacturer,
-    description:sauceObject.description,
+    name:xss(sauceObject.name),
+    manufacturer: xss(sauceObject.manufacturer),
+    description:xss(sauceObject.description),
     heat:sauceObject.heat,
     likes: "0",
     dislikes:"0",
     mainPepper:sauceObject.mainPepper,
     usersLiked: [],
     usersDisliked:[],
-    userId: sauceObject.userId,
+    userId: xss(sauceObject.userId),
     imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
   }
    
@@ -103,7 +104,10 @@ exports.deletesauce = async(req,res) => {
 };
 
 //-----------------function for user like dislike system-----------------------
-/*
+
+
+
+
 exports.likeSauce = (req,res,next) => {
 
   const like =req.body.like;
@@ -159,7 +163,7 @@ case 0:
   default :console.log(req.body);
 }
 }
-*/
+
 /*
 exports.createSauce = async(req, res)=>{
   try{

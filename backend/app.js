@@ -7,12 +7,11 @@ var cors = require('cors')
 // package multer for handle image files - MOVE TO ROUTE
 const multer = require ('./middleware/multer_config');
 
-//parameter for user authentification -MOVE TO ROUTE
+//parameter for user authentification -MOVE TO USER ROUTE
 const auth = require('./middleware/auth');
 
 //adding controller _ MOVE TO STUFF ROUTES
 const soucesController = require('./controllers/stuff')
-
 
 
 // security modules
@@ -42,16 +41,10 @@ mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net
      // app.use(express.json());
 
       console.log('Connexion à MongoDB réussie !')
-     
-      
- 
+    
     })
    
   .catch(() => console.log('Connexion à MongoDB échouée !'));
-
-
-
-
 
 
 //Adding CORS (Cross Origin Resource Sharing,)
@@ -71,16 +64,14 @@ var corsOptions = {
   optionsSuccessStatus: 200 // some legacy browsers (IE11, various SmartTVs) choke on 204
 }
 
-
-
-
-
 // Body parser middleware
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(cors());
 app.options('*',cors());
@@ -195,6 +186,6 @@ app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
 app.put("/api/sauces/:id",auth,multer,soucesController.modifysauce);
 app.delete("/api/sauces/:id",auth,soucesController.deletesauce);
-//app.post("/api/sauces/:id/like",soucesController.likeSauce);
+app.post("/api/sauces/:id/like",soucesController.likeSauce);
 
 module.exports = app;
