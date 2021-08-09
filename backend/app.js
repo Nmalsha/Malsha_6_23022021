@@ -12,7 +12,7 @@ const multer = require ('./middleware/multer_config');
 const auth = require('./middleware/auth');
 
 //adding controller _ MOVE TO STUFF ROUTES
-const soucesController = require('./controllers/stuff')
+const soucesController = require('./controllers/saurce')
 const userCtrl = require('./controllers/user');
 
 // security modules
@@ -27,7 +27,7 @@ dotenv.config();
 const user = require ('./models/user');
 
 // adding route
-const stuffRoutes = require ('./routes/stuff');
+const stuffRoutes = require ('./routes/sauce');
 const userRoutes = require ('./routes/user');
 
 //initialisation application expesse
@@ -114,8 +114,7 @@ app.post('/api/auth/signup',async(req, res, next) => {
     const salt = await bcrypt.genSalt(10);
      //  created hash with brcrypt in async
   const password = await bcrypt.hash(req.body.password ,salt)
-     //mask the email address
-    // let emailmask = buffer.toString('base64');
+     
    console.log(password);
    
   try{
@@ -185,8 +184,8 @@ app.post('/api/auth/signup',async(req, res, next) => {
 
 //--------------------------------TESTING -------------------------------
 
-//app.post('api/auth/signup',userCtrl.signup);
-//app.post('/api/auth/login',auth,userCtrl.login);
+//app.post("/api/auth/signup",auth,userCtrl.signup);
+//app.post("/api/auth/login",auth,userCtrl.login);
 app.get("/api/sauces",auth,soucesController.findAllSouces);
 app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);

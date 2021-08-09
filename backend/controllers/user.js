@@ -10,14 +10,15 @@ const jwt =require('jsonwebtoken');
 //adding bcryptconst for password protection
 const bcrypt = require('bcryptjs');
 
-
-
+const maskData = require('maskdata');
 
 /*
-exports.signup = async(req,res,next)=>{
-    
-    
-    console.log(req.body)
+
+
+//--------------SIGNUP A CLIENT-----------------------------------
+
+exports.signup = async(req, res, next) => {
+
   
     const {email,password:plainTextPassword} =req.body
     if(!email){
@@ -34,24 +35,18 @@ exports.signup = async(req,res,next)=>{
     const salt = await bcrypt.genSalt(10);
      //  created hash with brcrypt in async
   const password = await bcrypt.hash(req.body.password ,salt)
-     //mask the email address
-    // let emailmask = buffer.toString('base64');
-   console.log(password);
-   
+ 
   try{
    
    const reponce = await user.create({
-      email,
+      email:maskData.maskEmail2(req.body.email),
       password
      
      
     })
-    
-    console.log('user created successfully')
-    console.log(reponce)
-    console.log(reponce._id)
+  
   }catch(error){
-  //console.log(JSON.stringify(error))
+  
   if(error.code ===11000){
     //duplicate key
     return res.json({
@@ -63,15 +58,16 @@ exports.signup = async(req,res,next)=>{
   
    res.json ({status:'ok ok'})
     next();
-    
-}
-
-
-exports.login = async(req,res,next)=>{
+  };
+  
+  //--------------FIN SIGNUP A CLIENT-----------------------------------
+  
+  //--------------LOGIN A CLIENT-----------------------------------
+  exports.login = async(req,res,next)=>{
     const {email,password} = req.body
-    console.log(email)
-    const finduser = await user.findOne({email})
-  console.log(finduser._id)
+   
+    const finduser = await user.findOne({email:maskData.maskEmail2(req.body.email)})
+  
     //if user not exist
     if (!finduser) {
       return res.json({ status:'error', error: 'Invalid username/password !' });
@@ -87,16 +83,14 @@ exports.login = async(req,res,next)=>{
       'RANDOM_TOKEN_SECRET',
       { expiresIn: '24h' }
          )
-         console.log('user login successfully')
-         
-         
-         console.log(token)
+      
       return res.json({ status:'ok', token:token, userId:finduser._id });
     }
     
     console.log('Invalid username/password !')
     res.json ({status:'error', error:'Invalid username/password !'}) 
     next();
-}
-*/
+    };
+  
+  */
 
