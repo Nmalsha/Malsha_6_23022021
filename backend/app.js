@@ -76,13 +76,14 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
+//CORS
 app.use(cors());
 app.options('*',cors());
 
-//Routes
+
 //image file handling
 app.use('/images',express.static(path.join(__dirname,'images')));
+//Routes
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 app.use(methodOverride('_method'));

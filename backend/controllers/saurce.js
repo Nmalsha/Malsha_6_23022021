@@ -19,12 +19,11 @@ const auth = require('../middleware/auth');
 //-----------------function to Find sauces---------------
 
 exports.findAllSouces = async(req,res)=>{
-  //var allsauceObject = JSON.parse(req.body.sauce);
+
   const souce = await saucesModel.find()
   .then(souce => res.status(200).json(souce))
   .catch(error => res.status(400).json({error}));
 
-  //res.send({data: souce})
 
        }
 
@@ -33,10 +32,9 @@ exports.findAllSouces = async(req,res)=>{
 exports.createSauce =   (req, res,next)=>{
 
  var sauceObject = JSON.parse(req.body.sauce);
- console.log(sauceObject);
-  delete sauceObject._id;
  
-//console.log(sauceObject);
+  delete sauceObject._id;
+
   const newsauce =  new saucesModel({
     name:xss(sauceObject.name),
     manufacturer: xss(sauceObject.manufacturer),
@@ -52,11 +50,7 @@ exports.createSauce =   (req, res,next)=>{
   }
    
     );
-      console.log('newsauce details');
-  console.log(newsauce);
- 
-
-
+    
 newsauce.save()
  .then(() => res.status(201).json({ message: 'Objet enregistré !'}))
 
@@ -78,7 +72,7 @@ exports.findOneSauce = async(req,res) => {
 //-------------function to modify source----------------
 
 exports.modifysauce = (req, res, next) => {
- // console.log(req.body);
+ 
  const modisauceObject = req.file ?
  {
    ...JSON.parse(req.body.sauce),
@@ -96,7 +90,7 @@ exports.modifysauce = (req, res, next) => {
         { _id: req.params.id },
         { ...modisauceObject, _id: req.params.id }
       )
-      //console.log(modisauceObject)
+     
       .then(() => res.status(201).json({ message: "sauce modifié!" }))
       .catch((error) => res.status(400).json({ error: error }));
   } else {
