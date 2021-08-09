@@ -15,6 +15,7 @@ const auth = require('../middleware/auth');
 
 
 
+
 //-----------------function to Find sauces---------------
 
 exports.findAllSouces = async(req,res)=>{
@@ -77,25 +78,14 @@ exports.findOneSauce = async(req,res) => {
 //-------------function to modify source----------------
 
 exports.modifysauce = (req, res, next) => {
-  console.log(req.body);
-  let modisauceObject = {};
-
-  console.log(req.file);
-  if (req.file) {
-    modisauceObject = {
-      ...JSON.parse(req.body.sauce),
-      imageUrl: `${req.protocol}://${req.get("host")}/images/${
-        req.file.filename
-      }`,
-    };
-  } else {
-    console.log(...req.body.sauce);
-    modisauceObject = {
-      ...req.body.sauce,
-    };
-  }
-
-  console.log({ modisauceObject });
+ // console.log(req.body);
+ const modisauceObject = req.file ?
+ {
+   ...JSON.parse(req.body.sauce),
+   imageUrl: `${req.protocol}://${req.get("host")}/images/${req.file.filename }`
+ }:{
+  ...req.body
+ }
 
   const token = req.headers.authorization.split(" ")[1];
   const decodedToken = jwt.verify(token, "RANDOM_TOKEN_SECRET");
@@ -112,7 +102,7 @@ exports.modifysauce = (req, res, next) => {
   } else {
     throw new Error("403: unauthorized request");
   }
-};
+}
 //-------------function to delete source----------------
 exports.deletesauce = (req,res,next) => {
   saucesModel.findOne({_id:req.params.id})

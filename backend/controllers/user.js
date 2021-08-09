@@ -1,6 +1,6 @@
 
 //adding users
-const User = require ('../models/user');
+const user = require ('../models/user');
 
 const app = require('../app');
 
@@ -12,8 +12,8 @@ const bcrypt = require('bcryptjs');
 
 const maskData = require('maskdata');
 
-/*
 
+/*
 
 //--------------SIGNUP A CLIENT-----------------------------------
 
@@ -93,4 +93,3 @@ exports.signup = async(req, res, next) => {
     };
   
   */
-

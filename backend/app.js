@@ -12,7 +12,7 @@ const multer = require ('./middleware/multer_config');
 const auth = require('./middleware/auth');
 
 //adding controller _ MOVE TO STUFF ROUTES
-const soucesController = require('./controllers/saurce')
+//const soucesController = require('./controllers/saurce')
 const userCtrl = require('./controllers/user');
 
 // security modules
@@ -35,9 +35,9 @@ const app = express();
 
 //connection mongo DB
 
-//dotenv.config();
+//console.log(process.env.MongoDB_CONNECT),
 mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-//mongoose.connect('mongodb://localhost:3000/signup',
+//mongoose.connect(process.env.MongoDB_CONNECT,
   { useNewUrlParser: true,
     useUnifiedTopology: true })
     .then (()=>{
@@ -80,15 +80,12 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors());
 app.options('*',cors());
 
+//Routes
 //image file handling
 app.use('/images',express.static(path.join(__dirname,'images')));
-//Routes
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
-
 app.use(methodOverride('_method'));
-
-
 
 
 
@@ -96,7 +93,7 @@ app.use(methodOverride('_method'));
 
 //--------------SIGNUP A CLIENT-----------------------------------
 
-app.post('/api/auth/signup',async(req, res, next) => {
+app.post("/api/auth/signup",async(req, res, next) => {
   console.log(req.body)
   
     const {email,password:plainTextPassword} =req.body
@@ -147,7 +144,7 @@ app.post('/api/auth/signup',async(req, res, next) => {
   //--------------FIN SIGNUP A CLIENT-----------------------------------
   
   //--------------LOGIN A CLIENT-----------------------------------
-  app.post('/api/auth/login',async(req,res,next)=>{
+  app.post("/api/auth/login",async(req,res,next)=>{
     const {email,password} = req.body
     console.log(email)
     const finduser = await user.findOne({email:maskData.maskEmail2(req.body.email)})
@@ -179,18 +176,19 @@ app.post('/api/auth/signup',async(req, res, next) => {
     next();
     })
   
-  
 
 
 //--------------------------------TESTING -------------------------------
 
 //app.post("/api/auth/signup",auth,userCtrl.signup);
 //app.post("/api/auth/login",auth,userCtrl.login);
+
+/*
 app.get("/api/sauces",auth,soucesController.findAllSouces);
 app.post("/api/sauces",auth,multer,soucesController.createSauce);
 app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
 app.put("/api/sauces/:id",auth,multer,soucesController.modifysauce);
 app.delete("/api/sauces/:id",auth,soucesController.deletesauce);
 app.post("/api/sauces/:id/like",soucesController.likeSauce);
-
+*/
 module.exports = app;
