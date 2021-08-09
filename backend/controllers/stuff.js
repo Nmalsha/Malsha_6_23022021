@@ -73,14 +73,19 @@ exports.findOneSauce = async(req,res) => {
 }
 
 //-------------function to modify source----------------
-exports.modifysauce = async(req,res,nest) => {
+
+exports.modifysauce = async(req,res,next) => {
+  
   const modisauceObject = req.file?
+  
   {
     ...JSON.parse(req.body.sauce),
       imageUrl:`${req.protocol}://${req.get('host')}/images/${req.file.filename}`
       
   } : {...req.body};
+ 
   saucesModel.updateOne({_id:req.params.id},{...modisauceObject, _id: req.params.id})  
+  console.log(modisauceObject)
   .then(() => res.status(201).json({ message: 'sauce modifié!'}))
   .catch(error =>res.status(400).json({ error :error}));
   
@@ -88,7 +93,7 @@ exports.modifysauce = async(req,res,nest) => {
 
 
 //-------------function to delete source----------------
-exports.deletesauce = async(req,res) => {
+exports.deletesauce = async(req,res,next) => {
   saucesModel.findOne({_id:req.params.id})
   .then(sauce =>{
     const filename = sauce.imageUrl.split('/images')[1];
@@ -104,8 +109,6 @@ exports.deletesauce = async(req,res) => {
 };
 
 //-----------------function for user like dislike system-----------------------
-
-
 
 
 exports.likeSauce = (req,res,next) => {

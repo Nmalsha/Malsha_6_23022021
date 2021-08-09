@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const bodyParser = require('body-parser');
 const path = require('path');
 var cors = require('cors')
+const methodOverride =   require ('method-override');
 // package multer for handle image files - MOVE TO ROUTE
 const multer = require ('./middleware/multer_config');
 
@@ -85,6 +86,7 @@ app.use('/images',express.static(path.join(__dirname,'images')));
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 
+app.use(methodOverride('_method'));
 
 
 
@@ -127,7 +129,7 @@ app.post('/api/auth/signup',async(req, res, next) => {
     
     console.log('user created successfully')
     console.log(reponce)
-    console.log(reponce._id)
+    //console.log(reponce._id)
   }catch(error){
   //console.log(JSON.stringify(error))
   if(error.code ===11000){
@@ -150,7 +152,7 @@ app.post('/api/auth/signup',async(req, res, next) => {
     const {email,password} = req.body
     console.log(email)
     const finduser = await user.findOne({email:maskData.maskEmail2(req.body.email)})
-  console.log(finduser._id)
+  //console.log(finduser._id)
     //if user not exist
     if (!finduser) {
       return res.json({ status:'error', error: 'Invalid username/password !' });
