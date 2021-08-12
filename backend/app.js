@@ -21,7 +21,7 @@ const jwt =require('jsonwebtoken');
 const dotenv = require ('dotenv');
 const maskData = require('maskdata');
 
-dotenv.config();
+const envCfg = dotenv.config();
 
 //adding  users model -MOVE TO USER CONTROLLER
 const user = require ('./models/user');
@@ -35,9 +35,10 @@ const app = express();
 
 //connection mongo DB
 
-//console.log(process.env.MongoDB_CONNECT),
-mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
-//mongoose.connect(process.env.MongoDB_CONNECT,
+//mongoose.connect('mongodb+srv://malsha:Katupotha@1947@cluster0.ujzs5.mongodb.net/myFirstDatabase?retryWrites=true&w=majority',
+
+mongoose.connect(envCfg.parsed.MongoDB_URL,
+
   { useNewUrlParser: true,
     useUnifiedTopology: true })
     .then (()=>{
@@ -87,9 +88,6 @@ app.use('/images',express.static(path.join(__dirname,'images')));
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 app.use(methodOverride('_method'));
-
-
-
 
 
 //--------------SIGNUP A CLIENT-----------------------------------
@@ -179,17 +177,8 @@ app.post("/api/auth/signup",async(req, res, next) => {
   
 
 
-//--------------------------------TESTING -------------------------------
 
-//app.post("/api/auth/signup",auth,userCtrl.signup);
-//app.post("/api/auth/login",auth,userCtrl.login);
 
-/*
-app.get("/api/sauces",auth,soucesController.findAllSouces);
-app.post("/api/sauces",auth,multer,soucesController.createSauce);
-app.get("/api/sauces/:id",auth,soucesController.findOneSauce);
-app.put("/api/sauces/:id",auth,multer,soucesController.modifysauce);
-app.delete("/api/sauces/:id",auth,soucesController.deletesauce);
-app.post("/api/sauces/:id/like",soucesController.likeSauce);
-*/
+
+
 module.exports = app;

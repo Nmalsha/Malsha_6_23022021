@@ -1,13 +1,14 @@
 
 //package for delete the image from the server
 const fs = require('fs');
-
+//adding app.js file
 const app = require('../app');
-//adding sources
+//adding sources model
 const saucesModel =require ('../models/sources');
 
 //adding xss protection for the data entered by the user ( cross site scripting)
 const xss = require ('xss')
+//jwt token and auth middleware
 const jwt =require('jsonwebtoken');
 const auth = require('../middleware/auth');
 
@@ -16,7 +17,7 @@ const auth = require('../middleware/auth');
 
 
 
-//-----------------function to Find sauces---------------
+//-----------------function to Find ALL sauces---------------
 
 exports.findAllSouces = async(req,res)=>{
 
@@ -60,7 +61,7 @@ newsauce.save()
  
 }
 
-//-----------------function to find a sauce-----------------------
+//-----------------function to find ONE sauce-----------------------
 exports.findOneSauce = async(req,res) => {
   
    const findsouce = await saucesModel.findOne({_id:req.params.id})
