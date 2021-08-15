@@ -12,13 +12,13 @@ const bcrypt = require('bcryptjs');
 
 const maskData = require('maskdata');
 
+//const methodOverride =   require ('method-override');
 
-/*
 
 //--------------SIGNUP A CLIENT-----------------------------------
 
 exports.signup = async(req, res, next) => {
-
+  console.log(req.body)
   
     const {email,password:plainTextPassword} =req.body
     if(!email){
@@ -35,7 +35,9 @@ exports.signup = async(req, res, next) => {
     const salt = await bcrypt.genSalt(10);
      //  created hash with brcrypt in async
   const password = await bcrypt.hash(req.body.password ,salt)
- 
+     
+   console.log(password);
+   
   try{
    
    const reponce = await user.create({
@@ -44,9 +46,12 @@ exports.signup = async(req, res, next) => {
      
      
     })
-  
+    
+    console.log('user created successfully')
+    console.log(reponce)
+    //console.log(reponce._id)
   }catch(error){
-  
+  //console.log(JSON.stringify(error))
   if(error.code ===11000){
     //duplicate key
     return res.json({
@@ -65,9 +70,9 @@ exports.signup = async(req, res, next) => {
   //--------------LOGIN A CLIENT-----------------------------------
   exports.login = async(req,res,next)=>{
     const {email,password} = req.body
-   
+    console.log(email)
     const finduser = await user.findOne({email:maskData.maskEmail2(req.body.email)})
-  
+  //console.log(finduser._id)
     //if user not exist
     if (!finduser) {
       return res.json({ status:'error', error: 'Invalid username/password !' });
@@ -83,7 +88,10 @@ exports.signup = async(req, res, next) => {
       'RANDOM_TOKEN_SECRET',
       { expiresIn: '24h' }
          )
-      
+         console.log('user login successfully')
+         
+         
+         console.log(token)
       return res.json({ status:'ok', token:token, userId:finduser._id });
     }
     
@@ -92,4 +100,3 @@ exports.signup = async(req, res, next) => {
     next();
     };
   
- */

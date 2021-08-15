@@ -13,7 +13,7 @@ const auth = require('./middleware/auth');
 
 //adding controller _ MOVE TO STUFF ROUTES
 //const soucesController = require('./controllers/saurce')
-const userCtrl = require('./controllers/user');
+//const userCtrl = require('./controllers/user');
 
 // security modules
 const bcrypt = require('bcryptjs');
@@ -24,7 +24,7 @@ const maskData = require('maskdata');
 const envCfg = dotenv.config();
 
 //adding  users model -MOVE TO USER CONTROLLER
-const user = require ('./models/user');
+//const user = require ('./models/user');
 
 // adding route
 const stuffRoutes = require ('./routes/sauce');
@@ -89,7 +89,7 @@ app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 app.use(methodOverride('_method'));
 
-
+/*
 //--------------SIGNUP A CLIENT-----------------------------------
 
 app.post("/api/auth/signup",async(req, res, next) => {
@@ -176,7 +176,7 @@ app.post("/api/auth/signup",async(req, res, next) => {
     })
   
 
-
+*/
 
 
 
