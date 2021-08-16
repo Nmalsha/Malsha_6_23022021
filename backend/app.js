@@ -6,7 +6,7 @@ const path = require('path');
 var cors = require('cors')
 const methodOverride =   require ('method-override');
 // package multer for handle image files - MOVE TO ROUTE
-const multer = require ('./middleware/multer_config');
+//const multer = require ('./middleware/multer_config');
 
 //parameter for user authentification -MOVE TO USER ROUTE
 const auth = require('./middleware/auth');
@@ -88,7 +88,6 @@ app.use('/images',express.static(path.join(__dirname,'images')));
 app.use('/api/sauces',stuffRoutes);
 app.use('/api/auth',userRoutes);
 app.use(methodOverride('_method'));
-
 /*
 //--------------SIGNUP A CLIENT-----------------------------------
 
@@ -176,9 +175,9 @@ app.post("/api/auth/signup",async(req, res, next) => {
     })
   
 
+
+
 */
-
-
 
 
 module.exports = app;

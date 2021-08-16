@@ -5,7 +5,7 @@ const user = require ('../models/user');
 const app = require('../app');
 
 //Json web token
-const jwt =require('jsonwebtoken');
+const jwt = require('jsonwebtoken');
 
 //adding bcryptconst for password protection
 const bcrypt = require('bcryptjs');
@@ -99,4 +99,3 @@ exports.signup = async(req, res, next) => {
     res.json ({status:'error', error:'Invalid username/password !'}) 
     next();
     };
-  
