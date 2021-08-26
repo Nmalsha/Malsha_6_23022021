@@ -12,7 +12,6 @@ const bcrypt = require('bcryptjs');
 
 const maskData = require('maskdata');
 
-//const methodOverride =   require ('method-override');
 
 
 //--------------SIGNUP A CLIENT-----------------------------------
